@@ -4639,3 +4639,84 @@ function directorist_get_distance_range( $miles ) {
 
     return array( 'min' => $min_distance, 'max' => $max_distance );
 }
+function directorist_get_templatiq_template(string $template_name, $directorist_args): array {
+   
+    $mappings = [
+        'dcar' => [
+            'details_link' => directorist_get_templatiq_details_url( 131655 ),
+            'demo_link' => directorist_get_templatiq_demo_url('cars' ),
+        ],
+        'dclassified' => [
+            'details_link' => directorist_get_templatiq_details_url( 135930 ),
+            'demo_link' => directorist_get_templatiq_demo_url('classified' ),
+        ],
+        'ddoctors' => [
+            'details_link' => directorist_get_templatiq_details_url( 131665 ),
+            'demo_link' => directorist_get_templatiq_demo_url('doctors' ),
+        ],
+        'dhotels' => [
+            'details_link' => directorist_get_templatiq_details_url( 131646 ),
+            'demo_link' => directorist_get_templatiq_demo_url('hotels' ),
+        ],
+        'djobs' => [
+            'details_link' => directorist_get_templatiq_details_url( 131649 ),
+            'demo_link' => directorist_get_templatiq_demo_url('jobs' ),
+        ],
+        // 'directoria' => [
+        //     'details_link' => directorist_get_templatiq_details_url( 131655 ),
+        //     'demo_link' => directorist_get_templatiq_demo_url('directoria' ),
+        // ],
+        'dlawyers' => [
+            'details_link' => directorist_get_templatiq_details_url( 139143 ),
+            'demo_link' => directorist_get_templatiq_demo_url('lawyers' ),
+        ],
+        'dlist' => [
+            'details_link' => directorist_get_templatiq_details_url( 139132 ),
+            'demo_link' => directorist_get_templatiq_demo_url('dlist' ),
+        ],
+        'dplace' => [
+            'details_link' => directorist_get_templatiq_details_url( 134150 ),
+            'demo_link' => directorist_get_templatiq_demo_url('places' ),
+        ],
+        'drealestate' => [
+            'details_link' => directorist_get_templatiq_details_url( 131652 ),
+            'demo_link' => directorist_get_templatiq_demo_url('realestates' ),
+        ],
+        'drestaurant' => [
+            'details_link' => directorist_get_templatiq_details_url( 131642 ),
+            'demo_link' => directorist_get_templatiq_demo_url('restaurants' ),
+        ],
+        'dservice' => [
+            'details_link' => directorist_get_templatiq_details_url( 131687 ),
+            'demo_link' => directorist_get_templatiq_demo_url('services' ),
+        ],
+        'onelisting' => [
+            'details_link' => directorist_get_templatiq_details_url( 128475 ),
+            'demo_link' => directorist_get_templatiq_demo_url('onelisting' ),
+        ],
+        'onelisting-pro' => [
+            'details_link' => directorist_get_templatiq_details_url( 131659 ),
+            'demo_link' => directorist_get_templatiq_demo_url('onelisting-pro' ),
+        ],
+    ];
+
+    $template = $mappings[$template_name] ?? [];
+    if( $template ) {
+        $template['name']      = $directorist_args['name'] ?? '';
+        $template['thumbnail'] = $directorist_args['thumbnail'] ?? '';    
+    }
+   
+    return $template;
+}
+
+function directorist_is_templatiq_activated(): bool {
+    return defined( 'TEMPLATIQ_VERSION' );
+}
+
+function directorist_get_templatiq_demo_url( string $demo ): string {
+     return 'https://elementor.templatiq.com/' . $demo;
+}
+
+function directorist_get_templatiq_details_url( string $demo ): string {
+    return admin_url( 'admin.php?page=templatiq#/template/' ) . $demo;
+}

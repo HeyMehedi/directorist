@@ -3428,10 +3428,10 @@ input.atbdp-form-control {
 .theme-card figure figcaption .theme-title h5 {
   margin-bottom: 0 !important;
 }
-.theme-card figure figcaption .theme-action {
+.theme-card figure figcaption .templatiq-action {
   margin: -8px -6px;
 }
-.theme-card figure figcaption .theme-action .theme-action-btn {
+.theme-card figure figcaption .templatiq-action .templatiq-action-btn {
   border-radius: 20px;
   background-color: #f4f5f7 !important;
   font-size: 14px;
@@ -3442,7 +3442,7 @@ input.atbdp-form-control {
   display: inline-block;
   margin: 8px 6px;
 }
-.theme-card figure figcaption .theme-action .theme-action-btn.btn-customize {
+.theme-card figure figcaption .templatiq-action .templatiq-action-btn.btn-customize {
   color: #fff !important;
   background-color: #3e62f5 !important;
 }
@@ -3545,10 +3545,10 @@ input.atbdp-form-control {
   font-weight: 500;
   color: #272b41 !important;
 }
-.available-themes-wrapper figure .theme-action {
+.available-themes-wrapper figure .templatiq-action {
   margin: -8px -6px;
 }
-.available-themes-wrapper figure .theme-action .theme-action-btn {
+.available-themes-wrapper figure .templatiq-action .templatiq-action-btn {
   line-height: 40px;
   display: inline-block;
   padding: 0 20px;
@@ -3561,7 +3561,7 @@ input.atbdp-form-control {
   font-size: 14px;
   margin: 8px 6px;
 }
-.available-themes-wrapper figure .theme-action .theme-action-btn.theme-activate-btn {
+.available-themes-wrapper figure .templatiq-action .templatiq-action-btn.theme-activate-btn {
   background-color: #3e62f5 !important;
   color: #fff !important;
 }

@@ -1057,14 +1057,31 @@ if ( ! class_exists( 'ATBDP_Extensions' ) ) {
 				wp_send_json( array( 'status' => $status ) );
 			}
 
-			$installation_status = $this->install_file_from_subscriptions(
-				array(
-					'item_key' => $item_key,
-					'type' => $type,
-				)
-			);
+			if( 'plugin' === $type && 'templatiq' === $item_key ) {
 
-			wp_send_json( $installation_status );
+				$download_args = array( 'url' => 'https://downloads.wordpress.org/plugin/templatiq.zip' );
+				$download_status = $this->download_plugin( $download_args );
+
+				if ( ! $download_status['success'] ) {
+					return $download_status;
+				}
+
+				$status['success'] = true;
+				$status['message'] = __( 'Installed Successfully', 'directorist' );
+
+				wp_send_json( ['status' => $status ] );
+
+			} else {
+
+				$installation_status = $this->install_file_from_subscriptions(
+					array(
+						'item_key' => $item_key,
+						'type' => $type,
+					)
+				);
+
+				wp_send_json( $installation_status );	
+			}
 		}
 
 		// install_file_from_subscriptions
@@ -2275,7 +2292,7 @@ if ( ! class_exists( 'ATBDP_Extensions' ) ) {
 		 * @return bool
 		 */
 		protected function is_varified_host( $extension_url ) {
-			$signed_hostnames = array( 'directorist.com' );
+			$signed_hostnames = array( 'directorist.com', 'downloads.wordpress.org'  );
 
 			return in_array( parse_url( $extension_url, PHP_URL_HOST ), $signed_hostnames, true );
 		}
