@@ -87,7 +87,6 @@
     <div class="available-themes-wrapper">
         <h4><?php esc_html_e( 'Available in your subscription', 'directorist' )?></h4>
         <div class="available-themes">
-            <?php error_log( ' ddddd: ' . print_r($args['themes_available_in_subscriptions'] ,true) ); ?>
           
             <?php foreach ( $args['themes_available_in_subscriptions'] as $_theme_base => $template ): ?>
                

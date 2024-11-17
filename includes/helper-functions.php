@@ -4717,6 +4717,6 @@ function directorist_get_templatiq_demo_url( string $demo ): string {
      return 'https://elementor.templatiq.com/' . $demo;
 }
 
-function directorist_get_templatiq_details_url( string $demo ): string {
-    return admin_url( 'admin.php?page=templatiq#/template/' ) . $demo;
+function directorist_get_templatiq_details_url( string $id ): string {
+    return admin_url( 'admin.php?page=templatiq#/template/' ) . $id;
 }
