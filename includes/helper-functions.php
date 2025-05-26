@@ -2387,55 +2387,57 @@ function add_listing_category_location_filter( $lisitng_type, $settings, $taxono
 
 }
 
-
 /*
  * @since 6.3.0
  */
-function atbdp_guest_submission($guest_email)
-{
-    $string = $guest_email;
-    $explode = explode("@", $string);
-    array_pop($explode);
-    $userName = join('@', $explode);
-    //check if username already exist
-    if (username_exists($userName)) {
-        $random = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 1, 5);
-        $userName = $userName . $random;
-    }
-    // Check if user exist by email
-    if (email_exists($guest_email)) {
+function atbdp_guest_submission( $guest_email ) {
+	if ( email_exists( $guest_email ) ) {
         wp_send_json(array(
-                'error'                => true,
-                'quick_login_required' => true,
-                'email'                => $guest_email,
-                'error_msg'            => __('Email already registered. Please login first', 'directorist'),
-        ));
+			'email'                => $guest_email,
+			'quick_login_required' => true,
+			'error'                => true,
+			'error_msg'            => esc_html__( 'An account already exists with this email. Please log in with your password to continue.', 'directorist' ),
+        ) );
+
         die();
-    } else {
-        // lets register the user
-        $reg_errors = new WP_Error;
-        if (empty($reg_errors->get_error_messages())) {
-            $password = wp_generate_password(12, false);
-            $userdata = array(
-                'user_login' => $userName,
-                'user_email' => $guest_email,
-                'user_pass' => $password,
-            );
-            $user_id = wp_insert_user($userdata); // return inserted user id or a WP_Error
-            wp_set_current_user($user_id, $guest_email);
-            wp_set_auth_cookie($user_id);
-            do_action('atbdp_user_registration_completed', $user_id);
-            update_user_meta($user_id, '_atbdp_generated_password', $password);
-
-			if ( directorist_is_email_verification_enabled() ) {
-				// Set unverified flag. Once verified this flag will be removed.
-				update_user_meta( $user_id, 'directorist_user_email_unverified', 1 );
-			}
-
-            wp_new_user_notification($user_id, null, 'admin'); // send activation to the admin
-            ATBDP()->email->custom_wp_new_user_notification_email($user_id);
-        }
     }
+
+    list( $username ) = explode('@', $guest_email );
+    if ( username_exists( $username ) ) {
+        $random   = substr(str_shuffle( '0123456789abcdefghijklmnopqrstuvwxyz' ), 1, 5 );
+        $username = $username . $random;
+    }
+
+	$password = wp_generate_password(12, false);
+	$userdata = array(
+		'user_login' => $username,
+		'user_email' => $guest_email,
+		'user_pass'  => $password,
+	);
+
+	$user_id = wp_insert_user( $userdata );
+	if ( is_wp_error( $user_id ) ) {
+		wp_send_json(array(
+			'error'     => true,
+			'error_msg' => $user_id->get_error_message(),
+        ) );
+
+        die();
+	}
+
+	wp_set_current_user( $user_id, $guest_email );
+	wp_set_auth_cookie( $user_id );
+	update_user_meta( $user_id, '_atbdp_generated_password', $password );
+
+	if ( directorist_is_email_verification_enabled() ) {
+		// Set unverified flag. Once verified this flag will be removed.
+		update_user_meta( $user_id, 'directorist_user_email_unverified', 1 );
+	}
+
+	do_action('atbdp_user_registration_completed', $user_id );
+
+	wp_new_user_notification( $user_id, null, 'admin' ); // send activation to the admin
+	ATBDP()->email->custom_wp_new_user_notification_email( $user_id );
 }
 
 function atbdp_get_listing_attachment_ids( $listing_id ) {
@@ -3243,34 +3245,36 @@ if ( ! function_exists( 'directorist_is_plugin_active_for_network' ) ) {
  *
  * @since 7.0.6.2
  *
- * @param string $get_error_code
+ * @param string $error_code
  *
  * @return string Error message.
  */
 function directorist_get_registration_error_message( $error_code ) {
-	$message = [
+	$messages = [
 		'0' => __( 'Something went wrong!', 'directorist' ),
-		'1' => __( 'Registration failed. Please make sure you filed up all the necessary fields marked with <span style="color: red">*</span>', 'directorist' ),
+		'1' => __( 'Registration failed. Please make sure you filled out all the necessary fields marked with <span style="color: red">*</span>.', 'directorist' ),
 		'2' => sprintf(
 			/** translators: %1$s - link opening, %2$s - link closing */
 			__( 'This email is already registered. Please %1$sclick here to login%2$s.', 'directorist' ),
 			'<a class="directorist-authentication__toggle" href="' . ATBDP_Permalink::get_dashboard_page_link() . '">',
 			'</a>'
 		),
-		'3' => __( 'Username too short. At least 4 characters is required', 'directorist' ),
+		'3' => __( 'Username too short. At least 4 characters are required.', 'directorist' ),
 		'4' => sprintf(
 			/** translators: %1$s - link opening, %2$s - link closing */
 			__( 'This username is already registered. Please %1$sclick here to login%2$s.', 'directorist' ),
 			'<a class="directorist-authentication__toggle" href="' . ATBDP_Permalink::get_dashboard_page_link() . '">',
 			'</a>'
 		),
-		'5' => __( 'Password length must be greater than 5', 'directorist' ),
-		'6' => __( 'Email is not valid', 'directorist' ),
-		'7' => __( 'Space is not allowed in username', 'directorist' ),
-		'8' => __( 'Please make sure you filed up the user type', 'directorist' ),
+		'5' => __( 'Password length must be greater than 5 characters.', 'directorist' ),
+		'6' => __( 'Email is not valid.', 'directorist' ),
+		'7' => __( 'Spaces are not allowed in usernames.', 'directorist' ),
+		'8' => __( 'Please make sure you selected the user type.', 'directorist' ),
 	];
 
-	return isset( $message[ $error_code ] ) ? $message[ $error_code ] : '';
+	$messages = apply_filters( 'directorist_registration_error_messages', $messages, $error_code );
+
+	return isset( $messages[ $error_code ] ) ? $messages[ $error_code ] : '';
 }
 
 /**
@@ -4305,6 +4309,12 @@ function directorist_get_json_from_url( $url ) {
         return false;
     }
 
+	global $wp_filesystem;
+
+	require_once ( ABSPATH . '/wp-admin/includes/file.php' );
+
+	WP_Filesystem();
+
     // Unzip the file
     $unzip_result = unzip_file( $temp_file, $temp_dir );
     @unlink( $temp_file );
@@ -4421,6 +4431,10 @@ function directorist_delete_dir( $dir ) {
 function directorist_delete_temporary_upload_dirs() {
 	$upload_dir = wp_get_upload_dir();
 	$temp_dir   = trailingslashit( $upload_dir['basedir'] ) . 'directorist_temp_uploads/';
+
+	if ( ! file_exists( $temp_dir ) ) {
+		return;
+	}
 
 	$dirs = scandir( $temp_dir );
 	$date = date( 'nj' );
